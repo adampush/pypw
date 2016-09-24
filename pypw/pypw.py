@@ -17,7 +17,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from pyparsing import ParseException
 
-import dice
+import pypw.dice as dice
 import csv
 import os
 
