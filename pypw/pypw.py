@@ -1,3 +1,18 @@
+"""Generate passwords using a simplified diceware method.
+
+This module provides functions to generate passwords using a somewhat simplified diceware method. Special characters
+and numerals are not currently supported, but could be added manually after password is generated.
+
+Example of basic usage:
+    >>> pypw.generate(6)
+    13312 -> grasp
+    13233 -> given
+    16432 -> unit
+    13621 -> lake
+    15432 -> skid
+    13165 -> fruit
+    GraspGivenUnitLakeSkidFruit
+"""
 from __future__ import absolute_import, print_function, unicode_literals
 
 from pyparsing import ParseException
@@ -109,7 +124,7 @@ def generate(num_words=DEFAULT_NUM_WORDS, word_list_to_use=WORD_LIST_EFF_SMALL_1
 
 
 def roll(string, single=True, verbose=False):
-    """
+    """Roll dice using dice notation (e.g. 2d6)
 
     :param string:
     :param single:
