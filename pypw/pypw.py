@@ -67,6 +67,7 @@ def generate(num_words=DEFAULT_NUM_WORDS, word_list_to_use=WORD_LIST_EFF_SMALL_1
 
     roll_list = []  # A List for storing roll results (as strings)
     constructed_password = ''  # Empty string which will become the password eventually
+    # TODO: the following loop is completely nonpythonic... fix it
     # For each desired word, do a dice roll, look up a match in a word list, and store results.
     for i in range(0, num_words):
         # TODO: eliminate redundancy in these if/elif cases
