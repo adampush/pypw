@@ -57,7 +57,8 @@ DEFAULT_NUM_WORDS = 6  # Default number of words is 6... avoid magic numbers
 
 
 def generate(num_words=DEFAULT_NUM_WORDS, word_list_to_use=WORD_LIST_EFF_SMALL_1):
-    """
+    """Generate a diceware password. If called with no arguments, generates a
+    six-word password using the EFF "Small Wordlist #1."
 
     :type num_words: int
     :param word_list_to_use:
@@ -65,63 +66,25 @@ def generate(num_words=DEFAULT_NUM_WORDS, word_list_to_use=WORD_LIST_EFF_SMALL_1
     :return:
     """
 
-    roll_list = []  # A List for storing roll results (as strings)
-    constructed_password = ''  # Empty string which will become the password eventually
-    # TODO: the following loop is completely nonpythonic... fix it
-    # For each desired word, do a dice roll, look up a match in a word list, and store results.
-    for i in range(0, num_words):
-        # TODO: eliminate redundancy in these if/elif cases
-        if word_list_to_use == WORD_LIST_EFF_SMALL_1:
-            # Roll the "appropriate" number of dice for the chosen word list
-            dice_roll_list = dice.roll(DIE_STRING_EFF_SMALL)
-            # word_code_str will become a code string of N characters, each character is a numeral representing one die
-            # result. This must be seeded with a prefix character '1' because we are using the EFF "small" wordlist and
-            # all its entries start with a '1' for some reason.
-            word_code_str = EFF_SMALL_1_PREFIX_HACK
-            # The roll is returned as a list of individual numbers (die results) so concatenate each die number as a
-            # string to form a single N-digit code number
-            for die in dice_roll_list:
-                word_code_str += str(die)
-            # Store the N-digit code in a list
-            roll_list.append(word_code_str)  # TODO: this is not used. Do something with it?
-            # Use the Convert matching word to Title Case and append to password string variable
-            constructed_password += str(WORD_LIST_EFF_SMALL_1[word_code_str]).title()
-            print(word_code_str + ' -> ' + WORD_LIST_EFF_SMALL_1[word_code_str])
-        elif word_list_to_use == WORD_LIST_EFF_SMALL_2:
-            # Roll the "appropriate" number of dice for the chosen word list
-            dice_roll_list = dice.roll(DIE_STRING_EFF_SMALL)
-            # word_code_str will become a code string of N characters, each character is a numeral representing one die
-            # result.
-            word_code_str = ''
-            # The roll is returned as a list of individual numbers (die results) so concatenate each die number as a
-            # string to form a single N-digit code number
-            for die in dice_roll_list:
-                word_code_str += str(die)
-            # Store the N-digit code in a list
-            roll_list.append(word_code_str)  # TODO: this is not used. Do something with it?
-            # Use the Convert matching word to Title Case and append to password string variable
-            constructed_password += str(WORD_LIST_EFF_SMALL_2[word_code_str]).title()
-            print(word_code_str + ' -> ' + WORD_LIST_EFF_SMALL_2[word_code_str])
-        elif word_list_to_use == WORD_LIST_EFF_LARGE:
-            # Roll the "appropriate" number of dice for the chosen word list
-            dice_roll_list = dice.roll(DIE_STRING_EFF_LARGE)
-            # word_code_str will become a code string of N characters, each character is a numeral representing one die
-            # result. This must be seeded with a prefix character '1' because we are using the EFF "small" wordlist and
-            # all its entries start with a '1' for some reason.
-            word_code_str = ''
-            # The roll is returned as a list of individual numbers (die results) so concatenate each die number as a
-            # string to form a single N-digit code number
-            for die in dice_roll_list:
-                word_code_str += str(die)
-            # Store the N-digit code in a list
-            roll_list.append(word_code_str)  # TODO: this is not used. Do something with it?
-            # Use the Convert matching word to Title Case and append to password string variable
-            constructed_password += str(WORD_LIST_EFF_LARGE[word_code_str]).title()
-            print(word_code_str + ' -> ' + WORD_LIST_EFF_LARGE[word_code_str])
-        else:
-            pass
+    if word_list_to_use == WORD_LIST_EFF_SMALL_1 or WORD_LIST_EFF_SMALL_2:
+        die_string_to_use = DIE_STRING_EFF_SMALL
+    elif word_list_to_use == WORD_LIST_EFF_LARGE:
+        die_string_to_use = DIE_STRING_EFF_LARGE
+    else:
+        die_string_to_use = DIE_STRING_EFF_SMALL
+
+    # TODO: this is ugly but works, maybe split into two separate expressions for readability
+    code_list = [''.join([str(die) for die in roll(die_string_to_use)]) for i in range(0, num_words)]
+
+    if word_list_to_use == WORD_LIST_EFF_SMALL_1:
+        password_word_list = [word_list_to_use[EFF_SMALL_1_PREFIX_HACK + code_string] for code_string in code_list]
+    else:
+        password_word_list = [word_list_to_use[code_string] for code_string in code_list]
+
     # After we are done, print the constructed password to the stdout.
-    print(constructed_password)
+    for a, b in zip(code_list, password_word_list):
+        print("{} --> {}".format(a, b))
+    print(''.join([word.title() for word in password_word_list]))
 
 
 def roll(string, single=True, verbose=False):
