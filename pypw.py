@@ -14,7 +14,6 @@ Example of basic usage:
     GraspGivenUnitLakeSkidFruit
 """
 
-import pypw.dice as dice
 import csv
 import os
 import random
@@ -22,8 +21,6 @@ import random
 __author__ = "Adam Push"
 __version__ = '0.1'
 
-DIE_STRING_EFF_SMALL = '4d6'  # Roll 4d6 per roll if the wordlist is one of the two EFF "small" lists
-DIE_STRING_EFF_LARGE = '5d6'  # Roll 5d6 per roll if the wordlist is the large EFF list
 DICE_NUM_EFF_SMALL = 4
 DICE_NUM_EFF_LARGE = 5
 # For some reason the source txt file for the EFF small wordlist #1 has only four digits that vary but it has one
@@ -102,20 +99,6 @@ def generate(num_words=DEFAULT_NUM_WORDS, word_list_to_use=WORD_LIST_EFF_LARGE):
     for a, b in zip(code_list, password_word_list):
         print("{} --> {}".format(a, b))
     print(''.join([word.title() for word in password_word_list]))
-
-
-def roll(string, single=True, verbose=False):
-    """Roll dice using dice notation (e.g. 2d6)
-
-    :param string:
-    :param single:
-    :param verbose:
-    :return:
-    """
-
-    # TODO: using the dice library is way overkill. Rewrite to just use "random" module
-
-    return dice.roll(string, single, verbose)
 
 
 def roll_d6(num_dice):
