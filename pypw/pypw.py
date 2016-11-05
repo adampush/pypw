@@ -17,12 +17,15 @@ Example of basic usage:
 import pypw.dice as dice
 import csv
 import os
+import random
 
 __author__ = "Adam Push"
 __version__ = '0.1'
 
 DIE_STRING_EFF_SMALL = '4d6'  # Roll 4d6 per roll if the wordlist is one of the two EFF "small" lists
 DIE_STRING_EFF_LARGE = '5d6'  # Roll 5d6 per roll if the wordlist is the large EFF list
+DICE_NUM_EFF_SMALL = 4
+DICE_NUM_EFF_LARGE = 5
 # For some reason the source txt file for the EFF small wordlist #1 has only four digits that vary but it has one
 # constant digit in the MSB position that is constant=1.
 EFF_SMALL_1_PREFIX_HACK = '1'
@@ -60,19 +63,29 @@ def generate(num_words=DEFAULT_NUM_WORDS, word_list_to_use=WORD_LIST_EFF_LARGE):
     """
 
     # Decide which word list to use based on function argument
+    # if word_list_to_use is WORD_LIST_EFF_SMALL_1:
+    #     die_string_to_use = DIE_STRING_EFF_SMALL
+    # elif word_list_to_use is WORD_LIST_EFF_SMALL_2:
+    #     die_string_to_use = DIE_STRING_EFF_SMALL
+    # elif word_list_to_use is WORD_LIST_EFF_LARGE:
+    #     die_string_to_use = DIE_STRING_EFF_LARGE
+    # else:
+    #     die_string_to_use = DIE_STRING_EFF_SMALL
+
     if word_list_to_use is WORD_LIST_EFF_SMALL_1:
-        die_string_to_use = DIE_STRING_EFF_SMALL
+        die_string_to_use = DICE_NUM_EFF_SMALL
     elif word_list_to_use is WORD_LIST_EFF_SMALL_2:
-        die_string_to_use = DIE_STRING_EFF_SMALL
+        die_string_to_use = DICE_NUM_EFF_SMALL
     elif word_list_to_use is WORD_LIST_EFF_LARGE:
-        die_string_to_use = DIE_STRING_EFF_LARGE
+        die_string_to_use = DICE_NUM_EFF_LARGE
     else:
-        die_string_to_use = DIE_STRING_EFF_SMALL
+        die_string_to_use = DICE_NUM_EFF_SMALL
 
     # Create code list from die rolls
     code_list = []
     for i in range(num_words):
-        code_list.append(''.join([str(die) for die in roll(die_string_to_use)]))
+        # code_list.append(''.join([str(die) for die in roll(die_string_to_use)]))
+        code_list.append(''.join([str(die) for die in roll_d6(die_string_to_use)]))
 
     # Older, less readable way to create code list from die rolls
     # code_list = [''.join([str(die) for die in roll(die_string_to_use)]) for i in range(0, num_words)]
@@ -103,3 +116,17 @@ def roll(string, single=True, verbose=False):
     # TODO: using the dice library is way overkill. Rewrite to just use "random" module
 
     return dice.roll(string, single, verbose)
+
+
+def roll_d6(num_dice):
+    """Roll a number of six-sided dice and return the results.
+
+    :param num_dice: Number of dice to roll
+    :return: A List containing numdice 1d6 die roll results.
+    """
+
+    result = []
+    for i in range(num_dice):
+        result.append(random.randint(1, 6))
+
+    return result
