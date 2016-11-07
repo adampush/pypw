@@ -4,6 +4,7 @@ This module provides functions to generate passwords using a somewhat simplified
 and numerals are not currently supported, but could be added manually after password is generated.
 
 Example of basic usage:
+    >>> import pypw
     >>> pypw.generate(6)
     13312 -> grasp
     13233 -> given
@@ -29,6 +30,10 @@ EFF_SMALL_1_PREFIX_HACK = '1'
 
 DEFAULT_NUM_WORDS = 6
 
+WORD_LIST_EFF_SMALL_1 = 'WORD_LIST_EFF_SMALL_1'
+WORD_LIST_EFF_SMALL_2 = 'WORD_LIST_EFF_SMALL_2'
+WORD_LIST_EFF_LARGE = 'WORD_LIST_EFF_LARGE'
+
 
 # This code should get executed on import. This will read in the tab-delimited wordlist file and convert it into a
 # dictionary keyed on numerical codes so that we can easily look up words that match our rolls.
@@ -40,23 +45,24 @@ def _import_word_lists(file_path):
 # Create word list dictionaries
 sep = os.sep
 file_path = os.path.dirname(__file__) + sep + 'wordlists' + sep + 'eff_small_wordlist_1.txt'
-WORD_LIST_EFF_SMALL_1 = _import_word_lists(file_path)
+_WORD_LIST_EFF_SMALL_1 = _import_word_lists(file_path)
 
 file_path = os.path.dirname(__file__) + sep + 'wordlists' + sep + 'eff_small_wordlist_2.txt'
-WORD_LIST_EFF_SMALL_2 = _import_word_lists(file_path)
+_WORD_LIST_EFF_SMALL_2 = _import_word_lists(file_path)
 
 file_path = os.path.dirname(__file__) + sep + 'wordlists' + sep + 'eff_large_wordlist.txt'
-WORD_LIST_EFF_LARGE = _import_word_lists(file_path)
+_WORD_LIST_EFF_LARGE = _import_word_lists(file_path)
 
 
-def generate(num_words=DEFAULT_NUM_WORDS, word_list_to_use=WORD_LIST_EFF_LARGE):
+def generate(num_words=DEFAULT_NUM_WORDS, word_list=WORD_LIST_EFF_LARGE):
     """Generate a diceware password. If called with no arguments, generates a
     six-word password using the EFF "Large Word List."
 
-    :type num_words: integer
-    :param word_list_to_use:
-    :param num_words:
-    :return:
+    :type num_words: Integer
+    :type word_list: String
+    :param num_words: Desired number of words for the password
+    :param word_list: String that is tested against to indicate which word list to use.
+    :return: List of strings representing the generate words which make up the password.
     """
 
     # Decide which word list to use based on function argument
@@ -69,14 +75,18 @@ def generate(num_words=DEFAULT_NUM_WORDS, word_list_to_use=WORD_LIST_EFF_LARGE):
     # else:
     #     die_string_to_use = DIE_STRING_EFF_SMALL
 
-    if word_list_to_use is WORD_LIST_EFF_SMALL_1:
+    if word_list is WORD_LIST_EFF_SMALL_1:
         die_string_to_use = DICE_NUM_EFF_SMALL
-    elif word_list_to_use is WORD_LIST_EFF_SMALL_2:
+        word_list_to_use = _WORD_LIST_EFF_SMALL_1
+    elif word_list is WORD_LIST_EFF_SMALL_2:
         die_string_to_use = DICE_NUM_EFF_SMALL
-    elif word_list_to_use is WORD_LIST_EFF_LARGE:
+        word_list_to_use = _WORD_LIST_EFF_SMALL_2
+    elif word_list is WORD_LIST_EFF_LARGE:
         die_string_to_use = DICE_NUM_EFF_LARGE
+        word_list_to_use = _WORD_LIST_EFF_LARGE
     else:
         die_string_to_use = DICE_NUM_EFF_SMALL
+        word_list_to_use = _WORD_LIST_EFF_SMALL_1
 
     # Create code list from die rolls
     code_list = []
@@ -90,7 +100,7 @@ def generate(num_words=DEFAULT_NUM_WORDS, word_list_to_use=WORD_LIST_EFF_LARGE):
     # Use the code list to look up words in the word list and add them to the password list. If the word list is
     # "EFF Small #1", apply the "prefix hack" to prepend each word code with a prefix (this is due to the word
     # list file being a little wonky). TODO: should fix the source wordlist file so we do not have to do this.
-    if word_list_to_use is WORD_LIST_EFF_SMALL_1:
+    if word_list_to_use is _WORD_LIST_EFF_SMALL_1:
         password_word_list = [word_list_to_use[EFF_SMALL_1_PREFIX_HACK + code_string] for code_string in code_list]
     else:
         password_word_list = [word_list_to_use[code_string] for code_string in code_list]
@@ -99,6 +109,8 @@ def generate(num_words=DEFAULT_NUM_WORDS, word_list_to_use=WORD_LIST_EFF_LARGE):
     for a, b in zip(code_list, password_word_list):
         print("{} --> {}".format(a, b))
     print(''.join([word.title() for word in password_word_list]))
+
+    return password_word_list
 
 
 def roll_d6(num_dice):
