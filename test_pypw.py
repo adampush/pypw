@@ -2,7 +2,7 @@ import unittest
 from pypw import roll_d6
 
 
-class Roll_d6_Test_Case(unittest.TestCase):
+class RollD6TestCase(unittest.TestCase):
     """Tests for `pypw.py`."""
 
     def test_roll_six_dice(self):
@@ -40,12 +40,9 @@ class Roll_d6_Test_Case(unittest.TestCase):
             hist[roll - 1] += 1
         # Expected number of hits for each possible outcome is N/6 for Nd6
         # e.g. 1000 of each outcome expected for 6000 rolls
-        count = 1
         for outcome in hist:
-            # print('Count of outcome {} is {}'.format(count, outcome))
-            count += 1
-            self.assertLessEqual(outcome, N/6 + 200)
-            self.assertGreaterEqual(outcome, N/6 - 200)
+            self.assertLessEqual(outcome, 1.2 * N / 6)
+            self.assertGreaterEqual(outcome, 0.8 * N / 6)
 
 if __name__ == '__main__':
     unittest.main()
